@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+
+__confi_dir="$HOME/.config/confi"
+
+. $__confi_dir/scripts/confi-includes
+
+export PATH=$__confi_dir/scripts:$PATH
+
+dotfiles_repo=$1
+
+if [ -z "$dotfiles_repo" ]; then
+	echo
+	echo "Enter the path to your dotfiles repo:"
+	echo "(Example: git@bitbucket.org:your_name/your_repo.git)"
+	read -p "repo: " dotfiles_repo
+fi
+
+git init --bare $__confi_repo || exit 1
+confi remote add origin $dotfiles_repo || exit 1
+
+confi config status.showUntrackedFiles no || exit 1
+
+confi fetch || exit 1
+confi reset origin/master || {
+	touch $HOME/.confi_postinstall
+
+	confi add $HOME/.confirc_postinstall || exit 1
+	confi commit -m "InitialCommit" || exit 1
+	confi push -u origin master || exit 1
+}
+
+confi branch --set-upstream-to=origin/master master || exit 1
+
+confi submodule init || exit 1
+confi submodule update || exit 1
+
+if [ -f "$HOME/.confi_postinstall" ]; then
+	$HOME/.confi_postinstall
+fi
+
+echo
+confi status || exit 1
+
+shell=$(basename $SHELL)
+
+echo
+case $shell in
+	"bash" )
+		echo "Adding to $HOME/.bashrc:"
+		echo "PATH=$__confi_dir/scripts:\$PATH"
+		echo "PATH=$__confi_dir/scripts:\$PATH" >> $HOME/.bashrc
+	;;
+	"zsh" )
+		echo "Adding to $HOME/.zshrc:"
+		echo "PATH=$__confi_dir/scripts:\$PATH"
+		echo "PATH=$__confi_dir/scripts:\$PATH" >> $HOME/.zshrc
+	;;
+	"fish" )
+		echo "Adding to $HOME/.config/fish/config.fish:"
+		echo "setenv PATH $__confi_dir/scripts \$PATH"
+		echo "setenv PATH $__confi_dir/scripts \$PATH" >> $HOME/.config/fish/config.fish
+	;;
+	* )
+		echo 
+		echo "To complete the setup, add $__confi_dir/scripts to your path. Example for bash, add to ~/.bashrc:"
+		echo "PATH=$__confi_dir/scripts:\$PATH"
+	;;
+esac

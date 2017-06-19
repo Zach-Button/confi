@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+__confi_dir="$HOME/.config/confi"
+
+. $__confi_dir/scripts/confi-includes
+
+git="$__confi_git"
+
+if [ "$#" == "0" ]; then
+	$git status
+elif [[ $1 == :* ]]; then
+	cmd=$(echo $1 | sed "s/^://")
+
+	shift
+	if [ -f $__confi_dir/commands/$cmd ]; then
+		. $__confi_dir/commands/$cmd $@
+	else
+		echo "No such command: $cmd"
+	fi
+else
+	 $git $@
+fi

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+confi status
+echo
+
+confi-ask "Commit and push?" &&
+confi commit -am "Autosync-$(date +%D-%T)" &&
+confi pull --rebase &&
+confi push
+
