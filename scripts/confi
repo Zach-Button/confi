@@ -18,5 +18,9 @@ elif [[ $1 == :* ]]; then
 		echo "No such command: $cmd"
 	fi
 else
-	 $git $@
+	for var in "$@"; do
+		var="'"$var"'"
+	done
+
+	$git "$@"
 fi
