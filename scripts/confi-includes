@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-__confi_dir="$HOME/.config/confi"
-
-__confi_repo="$__confi_dir/dotfiles_repo"
-__confi_git="git --git-dir=$__confi_repo --work-tree=$HOME"

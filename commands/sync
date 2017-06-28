@@ -3,7 +3,7 @@
 confi status
 echo
 
-confi-ask "Commit and push?" &&
+confi :ask "Commit and push?" &&
 confi commit -am "Autosync $(date)" &&
 confi pull --rebase &&
 confi push

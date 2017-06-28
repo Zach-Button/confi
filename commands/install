@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-__confi_dir="$HOME/.config/confi"
-
-. $__confi_dir/scripts/confi-includes
-
 export PATH=$__confi_dir/scripts:$PATH
 
 dotfiles_repo=$1
@@ -30,6 +26,8 @@ confi reset origin/master || {
 }
 
 confi branch --set-upstream-to=origin/master master || exit 1
+
+confi checkout master -- ~/.gitmodules
 
 confi submodule init || exit 1
 confi submodule update || exit 1
